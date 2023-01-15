@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LinkedIn Spelling Checker</title>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-remote-config.js"></script>
+  </head>
+  <body>
+    <textarea id="textarea"></textarea>
+    <button onclick="createPost()">Create LinkedIn Post</button>
+    <script>
+      var firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+        measurementId: "YOUR_MEASUREMENT_ID"
+      };
+      firebase.initializeApp(firebaseConfig);
+      
+      function createPost() {
+        var text = document.getElementById("textarea").value;
+        var words = text.split(" ");
+        var correctText = "";
+        for (var i = 0; i < words.length; i++) {
+          var word = words[i];
+          var spellCheck = firebase.analytics.checkSpelling(word);
+          if (!spellCheck) {
+            alert("Spelling mistake found in word: " + word);
+          } else {
+            correctText += word + " ";
+          }
+        }
+        var access_token = 'YOUR_ACCESS_TOKEN';
+        var message = correctText;
+        var data = {
+          "comment": message
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.linkedin.com/v2/ugcPosts");
+        xhr.setRequestHeader('Authorization', 'Bearer ' + access_token);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 201) {
+            alert('Post Successful!');
+          }
+        }
+        xhr.send
+     </script>
+   </body>
+</html>
